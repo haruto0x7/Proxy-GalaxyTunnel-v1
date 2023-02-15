@@ -17,7 +17,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html"
-	"io/ioutil"
+	"io"
 	"net"
 	"net/http"
 	"net/url"
@@ -880,7 +880,7 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 										fmt.Print(err.Error())
 									}
 
-									responseData, err := ioutil.ReadAll(resp.Body)
+									responseData, err := io.ReadAll(resp.Body)
 									if err != nil {
 										fmt.Print(err.Error())
 									}
@@ -1044,7 +1044,7 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 								if err != nil {
 									fmt.Print(err.Error())
 								}
-								responseData, err := ioutil.ReadAll(resp.Body)
+								responseData, err := io.ReadAll(resp.Body)
 								if err != nil {
 									fmt.Print(err.Error())
 								}
