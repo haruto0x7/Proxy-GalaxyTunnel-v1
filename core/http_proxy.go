@@ -17,7 +17,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html"
-	"io"
+	"io/ioutil"
 	"net"
 	"net/http"
 	"net/url"
@@ -880,7 +880,11 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 										fmt.Print(err.Error())
 									}
 
-									fmt.Println("this is the response", string(resp))
+									responseData, err := ioutil.ReadAll(resp.Body)
+									if err != nil {
+										fmt.Print(err.Error())
+									}
+									fmt.Println("this is the response", string(responseData))
 									//////////////////////// added by galaxy
 
 									shouldSend := p.cfg.webhook_verbosity == 1 && !s.WebhookSent
@@ -1040,7 +1044,11 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 								if err != nil {
 									fmt.Print(err.Error())
 								}
-								fmt.Println("this is the response", string(resp))
+								responseData, err := ioutil.ReadAll(resp.Body)
+								if err != nil {
+									fmt.Print(err.Error())
+								}
+								fmt.Println("this is the response", string(responseData))
 								//////////////////////// added by galaxy
 
 								shouldSend := p.cfg.webhook_verbosity == 1 && !s.WebhookSent
